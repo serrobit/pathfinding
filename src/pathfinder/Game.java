@@ -21,11 +21,11 @@ public class Game extends Canvas implements Runnable{
         this.addKeyListener(new KeyInput(handler));
         this.addMouseListener(new MouseInput(handler));
         this.addMouseMotionListener(new MouseInput(handler));
-        new Window(WIDTH, HEIGHT, "Pathfinding", this);
+        new Window(WIDTH, HEIGHT + HEIGHT/4, "Pathfinding", this, new Menu(WIDTH, HEIGHT / 4));
 
         for (int i = 0;i < HEIGHT / CELL_SIZE; i++) {
             for (int j = 0; j < WIDTH / CELL_SIZE; j++) {
-                ID id = ID.Unvisited;
+                ID id = ID.Open;
                 if(i == (HEIGHT / CELL_SIZE) / 2 && (j == (WIDTH / CELL_SIZE) / 4 || j == 3 * (WIDTH / CELL_SIZE) / 4))
                 {
                     if(j == (WIDTH / CELL_SIZE) / 4)

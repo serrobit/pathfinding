@@ -3,13 +3,18 @@ package pathfinder;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import pathfinder.Algorithms;
+
 public class KeyInput extends KeyAdapter{
 
     private Handler handler;
+    private Algorithms algos;
 
     public KeyInput(Handler handler) {
         super();
         this.handler = handler;
+
+        this.algos = new Algorithms(handler);
     }
 
     public void keyPressed(KeyEvent e)
@@ -44,12 +49,37 @@ public class KeyInput extends KeyAdapter{
             case 38: // Up
                 moveEndCell(0, 1);
                 break;
+
+            // Algorithms
+            case 49: // Press 1 for Dijkstra
+                resetCellStates();
+                algos.runDijkstra();
+                break;
             default:
                 break;
         }
 
     }
 
+    public void resetCellStates(){
+        for (int i = 0; i < handler.objects.size(); i++) {
+            Cell cell = (Cell)handler.objects.get(i);
+            cell.setState(CellState.Unvisited);
+        }
+    }
+
+    // should make static somewhere
+    public int getFirstIndexOfCellByType(ID id){
+        for(int i = 0; i < handler.objects.size(); i++)
+        {
+            GameObject tempGameObject = handler.objects.get(i);
+            if(tempGameObject.id == id)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
     public void moveStartCell(int dx, int dy)
     {
         Cell startCell = (Cell)handler.objects.get(getFirstIndexOfCellByType(ID.StartPoint)); 
@@ -85,17 +115,7 @@ public class KeyInput extends KeyAdapter{
         cellAtNewIndex.setId(tempID);
     }
 
-    public int getFirstIndexOfCellByType(ID id){
-        for(int i = 0; i < handler.objects.size(); i++)
-        {
-            GameObject tempGameObject = handler.objects.get(i);
-            if(tempGameObject.id == id)
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
+    
 
 
     public int getShiftedIndex(int dx, int dy, Cell cell)

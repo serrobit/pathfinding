@@ -8,6 +8,7 @@ public class Cell extends GameObject{
     private boolean highlighted;
     private int iX; // grid coordinates
     private int iY; // grid coordinates
+    private CellState state;
 
     public Cell(ID id, int size, int iX, int iY) {
         super(iX*size, iY*size, id);
@@ -15,6 +16,17 @@ public class Cell extends GameObject{
         this.setiX(iX);
         this.setiY(iY);
         this.setHighlighted(false);
+        this.setState(CellState.Unvisited);
+    }
+
+
+    public CellState getState() {
+        return state;
+    }
+
+
+    public void setState(CellState state) {
+        this.state = state;
     }
 
 
@@ -61,9 +73,6 @@ public class Cell extends GameObject{
     @Override
     public void render(Graphics g) {
         switch (this.id) {
-            case Visited:
-                g.setColor(Color.orange);
-                break;
             case StartPoint:
                 g.setColor(Color.green);
                 break;
@@ -78,13 +87,23 @@ public class Cell extends GameObject{
                 break;
         }
 
+        if(this.state == CellState.Visited && (this.id != ID.StartPoint && this.id != ID.EndPoint && this.id != ID.Wall))
+        {
+            g.setColor(Color.lightGray);
+        }
+
+        if(this.state == CellState.OnPath && (this.id != ID.StartPoint && this.id != ID.EndPoint && this.id != ID.Wall))
+        {
+            g.setColor(Color.yellow);
+        }
+
         if( this.highlighted ) g.setColor(Color.DARK_GRAY);
 
-        g.fillRect(this.x, this.y, size, size);
+        g.fillRect(this.x, this.y, this.size, this.size);
 
 
         g.setColor(Color.black);
-        g.drawRect(this.x, this.y, size, size);
+        g.drawRect(this.x, this.y, this.size, this.size);
 
     }
     
