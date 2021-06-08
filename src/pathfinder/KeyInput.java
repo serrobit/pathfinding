@@ -2,6 +2,7 @@ package pathfinder;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.function.Function;
 
 import pathfinder.Algorithms;
 
@@ -16,6 +17,7 @@ public class KeyInput extends KeyAdapter{
 
         this.algos = new Algorithms(handler);
     }
+
 
     public void keyPressed(KeyEvent e)
     {
@@ -52,12 +54,25 @@ public class KeyInput extends KeyAdapter{
 
             // Algorithms
             case 49: // Press 1 for Dijkstra
-                resetCellStates();
-                algos.runDijkstra();
+                this.handler.game.setGameState(GameState.ShowingDijkstra);
+                break;
+
+            case 48: // Press 0 to not show an algorithm illustration
+                this.handler.game.setGameState(GameState.NoShow);
+                break;
+
+            case 57: // Press 9 to clear walls
+                resetCellWalls();
                 break;
             default:
                 break;
         }
+
+    }
+
+    public void runAlgoBasedOnState(){
+        resetCellStates();
+        if(this.handler.game.getGameState() == GameState.ShowingDijkstra) algos.runDijkstra();
 
     }
 
@@ -68,15 +83,20 @@ public class KeyInput extends KeyAdapter{
         }
     }
 
+    public void resetCellWalls(){
+        for (int i = 0; i < handler.objects.size(); i++) {
+            Cell cell = (Cell)handler.objects.get(i);
+            if(cell.getId() == ID.Wall) cell.setId(ID.Open);
+        }
+    }
+
     // should make static somewhere
     public int getFirstIndexOfCellByType(ID id){
         for(int i = 0; i < handler.objects.size(); i++)
         {
             GameObject tempGameObject = handler.objects.get(i);
-            if(tempGameObject.id == id)
-            {
-                return i;
-            }
+            if(tempGameObject.id == id) return i;
+
         }
         return -1;
     }
@@ -94,19 +114,14 @@ public class KeyInput extends KeyAdapter{
 
     public void moveCell(int dx, int dy, Cell cell)
     {
-        int size = cell.getSize();
-        int x = cell.getiX();
-        int y = cell.getiY();
-        int gridWidth = Game.WIDTH / size;
-        int gridHeight = Game.HEIGHT / size;
+
         int newIndex;
         ID tempID = cell.id;
         Cell cellAtNewIndex;
-
-        if(!(x + dx >= 0 && x + dx <= gridWidth - 1 && y - dy >= 0 && y - dy <= gridHeight - 1))
-            return;
         
-        newIndex = getShiftedIndex(dx, dy, cell);
+        newIndex = cell.getShiftedIndex(dx, dy);
+        if(newIndex == -1) return; // ignore invalid moves
+
         cellAtNewIndex = (Cell)handler.objects.get(newIndex);
         if(cellAtNewIndex.id == ID.StartPoint || cellAtNewIndex.id == ID.EndPoint || cellAtNewIndex.id == ID.Wall)
             return;
@@ -115,22 +130,10 @@ public class KeyInput extends KeyAdapter{
         cellAtNewIndex.setId(tempID);
     }
 
-    
-
-
-    public int getShiftedIndex(int dx, int dy, Cell cell)
-    {
-        int size = cell.getSize();
-        int x = cell.getiX();
-        int y = cell.getiY();
-        int gridWidth = Game.WIDTH / size;
-        return (y - dy)*gridWidth + (x + dx);
-    }
-
     public void keyReleased(KeyEvent e)
     {
         int key = e.getKeyCode();
-
+        runAlgoBasedOnState();
     }
     
 }

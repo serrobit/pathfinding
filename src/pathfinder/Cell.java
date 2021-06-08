@@ -64,6 +64,15 @@ public class Cell extends GameObject{
         this.size = size;
     }
 
+    public int getShiftedIndex(int dx, int dy)
+    {
+        int gridWidth = Game.WIDTH / this.size;
+        int gridHeight = Game.HEIGHT / this.size;
+
+        if(this.iY - dy < 0 || this.iY - dy >= gridHeight || this.iX + dx < 0 || this.iX + dx >= gridWidth) return -1;
+        return (this.iY - dy)*gridWidth + (this.iX + dx);
+    }
+
     @Override
     public void tick() {
         // TODO Auto-generated method stub
@@ -100,9 +109,13 @@ public class Cell extends GameObject{
         if( this.highlighted ) g.setColor(Color.DARK_GRAY);
 
         g.fillRect(this.x, this.y, this.size, this.size);
-
+        
 
         g.setColor(Color.black);
+        
+        //String index = String.format("%d", (Game.WIDTH/this.size)*this.iY+this.iX);
+        //g.drawString(index, this.x + this.size/2, this.y + this.size/2);
+        
         g.drawRect(this.x, this.y, this.size, this.size);
 
     }

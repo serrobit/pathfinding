@@ -24,7 +24,9 @@ public class Menu extends JPanel{
                         "<li><font color=blue>Left Mouse: Draw Walls</font>\n" +
                         "<li>Right Mouse: Remove Walls\n" +
                         "</ul>\n" +
-                        "<h4>Press 1 to Illustrate Dijkstra's Algorithm\n";
+                        "<h4>Press 0 to turn off algorithm illustrations.\n"+
+                        "<h4>Press 1 to Illustrate Dijkstra's Algorithm\n" +
+                        "<h4>Press 9 to clear all walls.\n";
          
         menuLabel = new JLabel(menuText);
         menuLabel.setOpaque(true);

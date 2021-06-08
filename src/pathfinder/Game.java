@@ -10,18 +10,20 @@ import java.awt.image.BufferStrategy;
 //
 public class Game extends Canvas implements Runnable{
     
-    public static final int WIDTH=800, HEIGHT = 600, CELL_SIZE = 20;
+    public static final int WIDTH=800, HEIGHT = 600, CELL_SIZE = 12;
 
     private Thread thread;
     private boolean running = false;
     private Handler handler;
+    private GameState gameState;
 
     public Game(){
+        this.setGameState(GameState.NoShow);
         handler = new Handler(this);
         this.addKeyListener(new KeyInput(handler));
         this.addMouseListener(new MouseInput(handler));
         this.addMouseMotionListener(new MouseInput(handler));
-        new Window(WIDTH, HEIGHT + HEIGHT/4, "Pathfinding", this, new Menu(WIDTH, HEIGHT / 4));
+        new Window(WIDTH, HEIGHT + HEIGHT/2, "Pathfinding", this, new Menu(WIDTH, HEIGHT / 2));
 
         for (int i = 0;i < HEIGHT / CELL_SIZE; i++) {
             for (int j = 0; j < WIDTH / CELL_SIZE; j++) {
@@ -37,6 +39,14 @@ public class Game extends Canvas implements Runnable{
             }
         }
         
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
     }
 
     public synchronized void start(){
