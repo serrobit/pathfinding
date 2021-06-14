@@ -2,10 +2,7 @@ package pathfinder;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
 
