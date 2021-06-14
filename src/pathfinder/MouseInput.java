@@ -64,6 +64,13 @@ public class MouseInput extends MouseInputAdapter{
                 selectedCell.setId(ID.Unvisited);
         }
     }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // TODO Auto-generated method stub
+        super.mouseReleased(e);
+        this.handler.runAlgoBasedOnState();
+    }
     
 
     int getCellIndexAtPoint(int x, int y){

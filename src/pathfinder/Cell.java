@@ -24,7 +24,6 @@ public class Cell extends GameObject{
         return state;
     }
 
-
     public void setState(CellState state) {
         this.state = state;
     }
