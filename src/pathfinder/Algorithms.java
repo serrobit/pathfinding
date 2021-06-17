@@ -51,7 +51,7 @@ public class Algorithms {
     }
 
     public boolean cellHasUnvisitedNeighbors(Cell c){
-        int[] neighbor_indices = {c.getShiftedIndex(-1, 0),c.getShiftedIndex(1, 0),c.getShiftedIndex(0, 1),c.getShiftedIndex(0, -1)};
+        int[] neighbor_indices = {c.getShiftedIndex(-2, 0),c.getShiftedIndex(2, 0),c.getShiftedIndex(0, 2),c.getShiftedIndex(0, -2)};
         for (int i = 0; i < neighbor_indices.length; i++) {
             if(neighbor_indices[i] == -1) continue;
             Cell neighbor = (Cell)handler.objects.get(neighbor_indices[i]);
@@ -60,6 +60,16 @@ public class Algorithms {
         return false;
     }
 
+    public LinkedList<Cell> getValidCellNeighbors(Cell c){
+        LinkedList<Cell> neighbors = new LinkedList<Cell>();
+        int[] neighbor_indices = {c.getShiftedIndex(-1, 0),c.getShiftedIndex(1, 0),c.getShiftedIndex(0, 1),c.getShiftedIndex(0, -1)};
+        
+        for (int i : neighbor_indices) {
+            if(neighbor_indices[i] != -1)
+            neighbors.push((Cell)handler.objects.get(neighbor_indices[i]));
+        }
+        return neighbors;
+    }
 
     public int getIndexByShortestDistance(LinkedList<Cell> checkList,HashMap<Cell,Integer> distanceMap)
     {
@@ -82,16 +92,14 @@ public class Algorithms {
 
     public void runDepthFirstRandomMaze(){
         Stack<Cell> maze = new Stack<Cell>();
-        int startIndex = getFirstIndexOfCellByType(ID.StartPoint);
+        int startIndex = getFirstIndexOfCellByType(ID.StartPoint), endIndex = getFirstIndexOfCellByType(ID.EndPoint);
         int numCells = handler.objects.size();
-        Cell startCell = (Cell)handler.objects.get(startIndex);
-        Cell currentCell;
-        Cell nextCell;
+        Cell startCell = (Cell)handler.objects.get(startIndex), endCell = (Cell)handler.objects.get(endIndex), currentCell, nextCell;
         Random rand = new Random();
         
         int randomDirection = 0;
         
-        maze.push(startCell);
+        
 
         for(int i = 0; i < numCells; i++){
             currentCell = (Cell)handler.objects.get(i);
@@ -105,10 +113,17 @@ public class Algorithms {
                     // currentCell.getiX()%2 == startCell.getiX()%2) )
                     // {
                     //     currentCell.setId(ID.Wall);
+                        
                     // } 
+                    currentCell.setState(CellState.Visited);
                 }
             currentCell.setState(CellState.Unvisited);
         }
+
+        
+        startCell.setState(CellState.Visited);
+        maze.push(startCell);
+
 
         while(!maze.isEmpty())
         {
@@ -119,44 +134,169 @@ public class Algorithms {
             {
                 maze.push(currentCell);
                 nextCell = currentCell;
-                int[] neighbor_indices = {currentCell.getShiftedIndex(-1, 0),currentCell.getShiftedIndex(1, 0),currentCell.getShiftedIndex(0, 1),currentCell.getShiftedIndex(0, -1)};
+                int[] neighbor_indices = {currentCell.getShiftedIndex(-2, 0),currentCell.getShiftedIndex(2, 0),currentCell.getShiftedIndex(0, 2),currentCell.getShiftedIndex(0, -2)};
                 randomDirection = rand.nextInt(neighbor_indices.length);
                 for (int i = 0; i < neighbor_indices.length; i++) {
-                    if(neighbor_indices[randomDirection] == -1) continue;
-                    nextCell = (Cell)handler.objects.get(neighbor_indices[randomDirection]);
-                    if( nextCell.getState() == CellState.Unvisited) break;
+                    if(neighbor_indices[randomDirection] != -1)
+                    {
+                        nextCell = (Cell)handler.objects.get(neighbor_indices[randomDirection]);
+                        if( nextCell.getState() == CellState.Unvisited) break;
+                    } 
+                    
                     randomDirection = (randomDirection + 1)%neighbor_indices.length;
                 }
                 
-                // if( currentCell.getiX() == nextCell.getiX() )
-                // {
-
-                // }
-                // if( currentCell.getiY() == nextCell.getiY() )
-                // {
-                    
-                // }
-                int ix =  nextCell.getiX() - currentCell.getiX(), iy =  nextCell.getiY() - currentCell.getiY(), wallIndex;
-                // if(ix == -2) ix = -1;
-                // if(ix == 2) ix = 1;
-                // if(iy == 2) ix = 1;
-                // if(iy == -2) ix = -1;
+                int ix =  nextCell.getiX() - currentCell.getiX(), iy = currentCell.getiY() - nextCell.getiY(), wallIndex;
+                if(ix == -2) ix++;
+                if(ix == 2) ix--;
+                if(iy == 2) iy--;
+                if(iy == -2) iy++;
                 wallIndex = currentCell.getShiftedIndex(ix, iy);
                 if(wallIndex != -1)
                 {
                     Cell wallToRemove = (Cell)handler.objects.get(wallIndex);
-                    if(wallToRemove.getId() == ID.Wall) wallToRemove.setId(ID.Open); // remove wall;
+                    if(wallToRemove.getId() != ID.StartPoint && wallToRemove.getId() != ID.EndPoint) wallToRemove.setId(ID.Open); // remove wall;
                 }
-
+                
+                if(nextCell.getId() != ID.StartPoint && nextCell.getId() != ID.EndPoint) nextCell.setId(ID.Open);
+                
                 nextCell.setState(CellState.Visited);
                 maze.push(nextCell);
             }
+            // if(maze.isEmpty() && endCell.getState() == CellState.Unvisited)
+            // {
+            //     endCell.setState(CellState.Visited);
+            //     maze.push(endCell);
+            // } 
             
         }
 
         for(int i = 0; i < numCells; i++){
             currentCell = (Cell)handler.objects.get(i);
             currentCell.setState(CellState.Unvisited);
+        }
+
+    }
+
+    public void runAStar(){
+        
+        // indexing variables
+        int startIndex = getFirstIndexOfCellByType(ID.StartPoint),
+            endIndex = getFirstIndexOfCellByType(ID.EndPoint),
+            currentIndex = 0,
+            nextIndex;
+
+        // distance variables
+        int distanceCheck, initialDistance;
+
+        Cell startCell = (Cell)handler.objects.get(startIndex),
+             endCell = (Cell)handler.objects.get(endIndex),
+             currentCell,
+             nextCell;
+
+        HashMap<Cell,Integer> gScore = new HashMap<Cell,Integer>(), fScore = new HashMap<Cell,Integer>();
+        HashMap<Cell,Cell> previousMap = new HashMap<Cell,Cell>();
+        
+        LinkedList<Cell> checkList = new LinkedList<Cell>();
+        Stack<Cell> path = new Stack<Cell>();
+
+        // Set up for A*
+        // Set each Cell with a distance of "infinity" from the start
+        for(int i = 0; i < handler.objects.size(); i++){
+            
+            if( i != startIndex) initialDistance = Integer.MAX_VALUE;
+            else initialDistance = 0;
+
+            currentCell = (Cell)handler.objects.get(i);
+            gScore.put(currentCell, initialDistance);
+        }
+
+        // add the start cell to the check list and update fScore
+        checkList.add(startCell);
+        fScore.put(startCell, distanceBetweenCells(startCell, endCell));
+
+        while(!checkList.isEmpty())
+        {
+
+            // get cell is smallest fScore value
+            currentIndex = getIndexByShortestDistance(checkList, fScore);
+            currentCell = checkList.remove(currentIndex);
+            currentCell.setState(CellState.Visited);
+
+            // stop if goal has been reached or there are no more cells to check
+            if(currentCell == null || currentCell == endCell) break;
+
+
+            // avoid walls along path
+            if(currentCell.getId() == ID.Wall) continue;
+
+                
+            // check neighbors of currentCell
+            for(int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++) {
+                    if( (i + j != 1) && (i + j != -1) ) continue;
+
+                        nextIndex = currentCell.getShiftedIndex(i, j);
+                        if(nextIndex > 0 && nextIndex < handler.objects.size() && nextIndex != -1)
+                        {
+                            // get neighboring cell
+                            nextCell = (Cell)handler.objects.get(nextIndex);
+                            
+
+                            if( nextCell.getState() != CellState.Visited )
+                            {
+
+                                // Heuristic Modification
+                                int distanceBetween = distanceBetweenCells(currentCell, nextCell);
+
+                                // int dx1 = currentCell.getiX() - endCell.getiX(),
+                                //     dx2 = startCell.getiX() - endCell.getiX(),
+                                //     dy1 = currentCell.getiY() - endCell.getiY(),
+                                //     dy2 = startCell.getiY() - endCell.getiY(),
+                                //     cross = Math.abs(dx1*dy2 - dx2*dy1);
+
+                                distanceCheck = distanceBetween + gScore.get(currentCell);
+                                checkList.push(nextCell);
+                                nextCell.setState(CellState.Visited);
+
+                                // if this neighbor is along a better path to take...
+                                if(distanceCheck < gScore.get(nextCell))
+                                {
+                                    gScore.put(nextCell, distanceCheck); // update the distance 
+                                    fScore.put(nextCell, distanceCheck + distanceBetweenCells(nextCell, endCell));
+
+                                    // Heuristic Modification
+                                    // fScore.put(nextCell, distanceCheck + distanceBetweenCells(nextCell, endCell) + cross); // adjust distance to this cell to start
+                                    
+                                    previousMap.put(nextCell,currentCell);
+                                    checkList.push(nextCell);  
+                                }
+
+                            }
+                            
+                        }
+                    
+                    
+                    
+                }
+            }
+            
+            
+        }
+
+        currentCell = endCell;
+        while(currentCell != null)
+        {
+            path.push(currentCell);
+            currentCell = previousMap.get(currentCell);
+        }
+
+        if(path.peek() == startCell)
+        {
+            for (Cell cell : path) {
+                cell.setState(CellState.OnPath);
+            }
         }
 
     }

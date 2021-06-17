@@ -24,6 +24,7 @@ public class Menu extends JPanel{
                         "</ul>\n" +
                         "<h4>Press 0 to turn off algorithm illustrations.\n"+
                         "<h4>Press 1 to Illustrate Dijkstra's Algorithm\n" +
+                        "<h4>Press 2 to Illustrate A* Algorithm\n" +
                         "<h4>Press 8 to generate a depth-first random maze\n" +
                         "<h4>Press 9 to clear all walls\n";
          

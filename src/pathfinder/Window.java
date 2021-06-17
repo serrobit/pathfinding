@@ -13,8 +13,8 @@ public class Window extends Canvas
         JFrame frame = new JFrame(title);
 
         frame.getContentPane().setPreferredSize(new Dimension(width,height));
-        frame.setMaximumSize(new Dimension(width,height));
-        frame.setMinimumSize(new Dimension(width,height));
+        frame.getContentPane().setMaximumSize(new Dimension(width,height));
+        frame.getContentPane().setMinimumSize(new Dimension(width,height));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);

@@ -42,6 +42,7 @@ public class Handler {
     public void runAlgoBasedOnState(){
         resetCellStates();
         if(this.game.getGameState() == GameState.ShowingDijkstra) this.algos.runDijkstra();
+        if(this.game.getGameState() == GameState.ShowingAStar) this.algos.runAStar();
 
     }
 

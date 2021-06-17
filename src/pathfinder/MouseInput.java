@@ -24,6 +24,8 @@ public class MouseInput extends MouseInputAdapter{
     public void mouseMoved(MouseEvent e) {
         int x=e.getX();
         int y=e.getY();
+        if( x < 0 || y < 0 || x>Game.WIDTH || y>Game.HEIGHT)
+            return;
         resetCellHighlights();
         Cell cellToHighlight = (Cell)handler.objects.get(getCellIndexAtPoint(x,y));
         cellToHighlight.setHighlighted(true);
@@ -34,7 +36,7 @@ public class MouseInput extends MouseInputAdapter{
         
         int x=e.getX();
         int y=e.getY();
-        if( x <= 0 || y <= 0 || x>=Game.WIDTH || y>=Game.HEIGHT)
+        if( x < 0 || y < 0 || x>Game.WIDTH || y>Game.HEIGHT)
             return;
         Cell selectedCell = (Cell)handler.objects.get(getCellIndexAtPoint(x,y));
         resetCellHighlights();
@@ -44,7 +46,7 @@ public class MouseInput extends MouseInputAdapter{
                selectedCell.setId(ID.Wall);
            }
            if(SwingUtilities.isRightMouseButton(e) ){
-            selectedCell.setId(ID.Unvisited);
+            selectedCell.setId(ID.Open);
         }
             
         }

@@ -62,6 +62,10 @@ public class KeyInput extends KeyAdapter{
                 this.handler.game.setGameState(GameState.ShowingDijkstra);
                 break;
 
+            case 50: // Press 2 for A*
+                this.handler.game.setGameState(GameState.ShowingAStar);
+                break;
+
             case 48: // Press 0 to not show an algorithm illustration
                 this.handler.game.setGameState(GameState.NoShow);
                 break;

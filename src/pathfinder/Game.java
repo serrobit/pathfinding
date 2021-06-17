@@ -10,7 +10,7 @@ import java.awt.image.BufferStrategy;
 //
 public class Game extends Canvas implements Runnable{
     
-    public static final int WIDTH=800, HEIGHT = 600, CELL_SIZE = 12;
+    public static final int WIDTH=800, HEIGHT = 600, CELL_SIZE = 20;
 
     private Thread thread;
     private boolean running = false;
