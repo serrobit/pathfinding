@@ -238,7 +238,7 @@ public class Algorithms {
                     if( (i + j != 1) && (i + j != -1) ) continue;
 
                         nextIndex = currentCell.getShiftedIndex(i, j);
-                        if(nextIndex > 0 && nextIndex < handler.objects.size() && nextIndex != -1)
+                        if(nextIndex >= 0 && nextIndex < handler.objects.size() && nextIndex != -1)
                         {
                             // get neighboring cell
                             nextCell = (Cell)handler.objects.get(nextIndex);
@@ -359,7 +359,7 @@ public class Algorithms {
                     if( (i + j != 1) && (i + j != -1) ) continue;
 
                         nextIndex = currentCell.getShiftedIndex(i, j);
-                        if(nextIndex > 0 && nextIndex < numCells && nextIndex != -1)
+                        if(nextIndex >= 0 && nextIndex < numCells && nextIndex != -1)
                         {
                             nextCell = (Cell)handler.objects.get(nextIndex);
                             
