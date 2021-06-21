@@ -91,15 +91,11 @@ public class Algorithms {
     }
 
     public void runDepthFirstRandomMaze(){
+
         Stack<Cell> maze = new Stack<Cell>();
-        int startIndex = getFirstIndexOfCellByType(ID.StartPoint), endIndex = getFirstIndexOfCellByType(ID.EndPoint);
-        int numCells = handler.objects.size();
-        Cell startCell = (Cell)handler.objects.get(startIndex), endCell = (Cell)handler.objects.get(endIndex), currentCell, nextCell;
+        int startIndex = getFirstIndexOfCellByType(ID.StartPoint), numCells = handler.objects.size(), randomDirection = 0;
+        Cell startCell = (Cell)handler.objects.get(startIndex), currentCell, nextCell;
         Random rand = new Random();
-        
-        int randomDirection = 0;
-        
-        
 
         for(int i = 0; i < numCells; i++){
             currentCell = (Cell)handler.objects.get(i);
@@ -107,14 +103,6 @@ public class Algorithms {
                 currentCell.getId() != ID.EndPoint)
                 {
                     currentCell.setId(ID.Wall);
-                    // if((currentCell.getiY() % 2 == startCell.getiY()%2 &&
-                    // currentCell.getiX()%2 != startCell.getiX()%2) || 
-                    // (currentCell.getiY() % 2 != startCell.getiY()%2 &&
-                    // currentCell.getiX()%2 == startCell.getiX()%2) )
-                    // {
-                    //     currentCell.setId(ID.Wall);
-                        
-                    // } 
                     currentCell.setState(CellState.Visited);
                 }
             currentCell.setState(CellState.Unvisited);
@@ -163,11 +151,6 @@ public class Algorithms {
                 nextCell.setState(CellState.Visited);
                 maze.push(nextCell);
             }
-            // if(maze.isEmpty() && endCell.getState() == CellState.Unvisited)
-            // {
-            //     endCell.setState(CellState.Visited);
-            //     maze.push(endCell);
-            // } 
             
         }
 

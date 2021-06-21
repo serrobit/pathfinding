@@ -22,11 +22,15 @@ public class MouseInput extends MouseInputAdapter{
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        int x=e.getX();
-        int y=e.getY();
+        
+        int x=e.getX(),
+            y=e.getY();
+        
         if( x < 0 || y < 0 || x>Game.WIDTH || y>Game.HEIGHT)
             return;
+        
         resetCellHighlights();
+        
         Cell cellToHighlight = (Cell)handler.objects.get(getCellIndexAtPoint(x,y));
         cellToHighlight.setHighlighted(true);
     }
@@ -34,11 +38,12 @@ public class MouseInput extends MouseInputAdapter{
     @Override
     public void mouseDragged(MouseEvent e) {
         
-        int x=e.getX();
-        int y=e.getY();
+        int x=e.getX(),
+            y=e.getY();
         if( x < 0 || y < 0 || x>Game.WIDTH || y>Game.HEIGHT)
             return;
-        Cell selectedCell = (Cell)handler.objects.get(getCellIndexAtPoint(x,y));
+        
+            Cell selectedCell = (Cell)handler.objects.get(getCellIndexAtPoint(x,y));
         resetCellHighlights();
         if(selectedCell.id != ID.StartPoint && selectedCell.id != ID.EndPoint)
         {
@@ -54,31 +59,35 @@ public class MouseInput extends MouseInputAdapter{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        int x=e.getX();
-        int y=e.getY();
-        Cell selectedCell = (Cell)handler.objects.get(getCellIndexAtPoint(x,y));
+
+        int x=e.getX(),
+            y=e.getY(),
+            button = e.getButton();
         
-        if(selectedCell.id != ID.StartPoint && selectedCell.id != ID.EndPoint)
-        {
-            if(selectedCell.id != ID.Wall)
-                selectedCell.setId(ID.Wall);
-            else
-                selectedCell.setId(ID.Unvisited);
+            Cell selectedCell = (Cell)handler.objects.get(getCellIndexAtPoint(x,y));
+        
+        switch(button){
+            case 1:
+                if(selectedCell.id != ID.StartPoint && selectedCell.id != ID.EndPoint) selectedCell.setId(ID.Wall);
+                break;
+            case 3:
+                if(selectedCell.id != ID.StartPoint && selectedCell.id != ID.EndPoint) selectedCell.setId(ID.Open);
+                break;
         }
+        
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
         super.mouseReleased(e);
         this.handler.runAlgoBasedOnState();
     }
     
 
     int getCellIndexAtPoint(int x, int y){
-        int iX = x / Game.CELL_SIZE;
-        int iY = y / Game.CELL_SIZE;
-        int index = iY*(Game.WIDTH/Game.CELL_SIZE) + iX;
+        int iX = x / Game.CELL_SIZE,
+            iY = y / Game.CELL_SIZE,
+            index = iY*(Game.WIDTH/Game.CELL_SIZE) + iX;
         return index;
     }
 }
